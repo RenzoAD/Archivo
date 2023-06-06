@@ -1,8 +1,0 @@
-VARIABLE ENV NAME	=SISCO_PATH
-VARIABLE ENV VAL	=LOCALPATH
-
-VARIABLE ENV NAME	=SISCO_VERSION   							'DEPRECATED
-VARIABLE ENV VAL	=V1.2			Sintaxis(V[NUMERIC].[NUMERIC]) 	'DEPRECATED
-
-Formula ESP		=BUSCARV([@Código];'C:\Users\KAREN\Desktop\SiscoMacro\[DATA-COMERCIALES_.xlsx]tmp0alys_xls'!$B:$H;6;0)
-Formula ENG		=VLOOKUP([@Código],'C:\Users\KAREN\Desktop\SiscoMacro\[DATA-COMERCIALES_.xlsx]tmp0alys_xls'!$B:$H,6,0)
