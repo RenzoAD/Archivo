@@ -1,0 +1,36 @@
+SELECT	
+		RTRIM(p.codf) AS Codigo, 
+		RTRIM(p.marc) AS Marca, 
+		RTRIM(p.descr) AS Descripcion, 
+		CAST(p.stoc+a.stoc AS DECIMAL(18,2)) AS Stock, 
+		CONVERT(varchar(10),max_FI.ult_ingreso, 103) AS "Fecha Ult. Ingreso", 
+		max_FI.cant AS "Cantidad Ult. Ingreso", 
+		DATEDIFF(DAY, max_FI.ult_ingreso, GETDATE()) AS "Dias Ult. Ingreso",
+		CONVERT(varchar(10), max_k.ultimaVenta, 103) AS "Fecha Ult. Venta", 
+		DATEDIFF(DAY, max_k.ultimaVenta, GETDATE()) AS "Dias Ult. Venta"
+FROM BdNava01.dbo.prd0101 p
+LEFT JOIN BdNava01.dbo.prd0102 a ON p.codi = a.codi
+LEFT JOIN (
+    SELECT codi, MAX(fecha) AS ultimaVenta
+    FROM BdNava01.dbo.kdd0102
+    WHERE tmov = 'S' 
+        AND (nomglo = 'VTA. AL PERSONAL' OR nomglo = 'MERCADERIA' OR nomglo = 'VENTA DE PRODUCTOS')
+    GROUP BY codi
+) AS max_k ON p.codi = max_k.codi
+LEFT JOIN (
+	SELECT *
+	FROM (
+		SELECT 
+			RTRIM(FI.codf) AS codf,
+			FI.fecha AS ult_ingreso,
+			FI.cant,
+			FI.ndocu,
+			ROW_NUMBER() OVER (PARTITION BY FI.codf ORDER BY FI.fecha DESC) AS rn
+		FROM BdNava01.dbo.dtl01gim AS FI
+		LEFT JOIN BdNava01.dbo.mst01gim F ON FI.ndocu = F.ndocu
+		WHERE FI.cant > 0 AND (F.codglo = '01' OR F.codglo = '16' OR F.codglo = '20')
+		) AS sub
+		WHERE rn = 1
+) AS max_FI ON max_FI.codf = p.codf
+GROUP BY p.codf, p.marc, p.descr, p.stoc+a.stoc, max_FI.ult_ingreso, max_FI.cant, max_k.ultimaVenta
+ORDER BY p.codf ASC;
