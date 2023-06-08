@@ -40,10 +40,11 @@ LEFT JOIN (
 GROUP BY p.codf, p.descr, p.stoc+a.stoc, max_k.ultimaVenta
 ORDER BY max_k.ultimaVenta ASC;
 
---ULTIMO INGRESO POR PRODDUCTO
+--ULTIMO INGRESO POR PRODDUCTO GENERAL
 SELECT I.codf, I.descr, max(I.fecha) as fecha
 FROM BdNava01.dbo.mst01gim G
 INNER JOIN BdNava01.dbo.dtl01gim I ON G.ndocu = I.ndocu
+where i.codf = '18445'
 group by I.codf, I.descr
 order by I.codf
 
@@ -106,9 +107,10 @@ SELECT *
 --Tabla ultimo ingreso
 SELECT 
    RTRIM(t1.codf) AS codf,
+   RTRIM(t1.marc) AS marca,
    RTRIM(t1.descr) AS descr,
    CONVERT(varchar(10), t1.fecha, 103) as ult_ingreso,
-   t1.cant,
+   SUM(t1.cant) AS cant,
    t1.ndocu	
 FROM BdNava01.dbo.dtl01gim AS t1
 LEFT JOIN BdNava01.dbo.mst01gim F ON t1.ndocu = F.ndocu
@@ -116,5 +118,16 @@ WHERE t1.fecha = (
    SELECT MAX(t2.fecha)
    FROM BdNava01.dbo.dtl01gim AS t2
    WHERE t1.codf = t2.codf
-) AND F.crefe = '28' AND (F.codglo = '01' OR F.codglo = '16' OR F.codglo = '20')
-ORDER BY t1.codf, t1.fecha ASC
+)  AND t1.cant>0 AND (F.codglo = '01' OR F.codglo = '16' OR F.codglo = '20') --AND F.crefe = '28'
+GROUP BY t1.codf, t1.marc, t1.descr, t1.fecha, t1.ndocu
+ORDER BY t1.codf ASC
+
+
+SELECT 
+  *	
+FROM BdNava01.dbo.dtl01gim AS t1
+LEFT JOIN BdNava01.dbo.mst01gim F ON t1.ndocu = F.ndocu
+WHERE f.ndocu = '001-00015968'
+
+
+ORDER BY t1.marc ASC
