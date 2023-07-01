@@ -1,0 +1,1 @@
+=SI([@[Fecha_reg]]>FECHA.MES(HOY();-6);"Nuevo";"Antiguo")

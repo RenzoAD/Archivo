@@ -1,0 +1,2 @@
+=SUMAPRODUCTO((SiscoTable[Abc_v]="A")*(SiscoTable[Stock_actual]>=0)*SUBTOTALES(109;DESREF(SiscoTable[Stock(S/.)];FILA(SiscoTable[Stock(S/.)])-MIN(FILA(SiscoTable[Stock(S/.)]));;1)))
+=SUMAPRODUCTO((SiscoTable[Abc_v]="A")*(SiscoTable[Stock_actual]>=0)*(HOY()-SiscoTable[Fecha_reg]<30.4167*U1)*SUBTOTALES(109;DESREF(SiscoTable[Stock(S/.)];FILA(SiscoTable[Stock(S/.)])-MIN(FILA(SiscoTable[Stock(S/.)]));;1)))
